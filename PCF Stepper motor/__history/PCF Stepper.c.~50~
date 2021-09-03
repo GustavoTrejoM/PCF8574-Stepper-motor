@@ -1,0 +1,88 @@
+/*****************************************************************************/
+// Código para realizar escritura digital en el PCF8574AP, esto para controlar
+// dos motores a paso bipolares
+// Desarrollado por: Gustavo Trejo -Agosto de 2021
+/*****************************************************************************/
+#INCLUDE<16F887.h>
+#DEVICE ADC=10
+#FUSES XT,PUT,NOPROTECT,BROWNOUT,NOLVP,WDT
+#USE delay(internal=8000000)
+#USE I2C(MASTER, SDA=PIN_C4, SLOW, SCL=PIN_C3, NOFORCE_SW)
+#use standard_io(c)
+
+#BYTE PORTA=5;
+
+#DEFINE M1D PORTA,0
+#DEFINE M1I PORTA,1
+#DEFINE M2D PORTA,2
+#DEFINE M2I PORTA,3
+
+
+/***************************Variables globales********************************/
+int16 M1V=0; 
+int16 M2V=0;
+unsigned int16 count1=0;
+unsigned int16 count2=0;
+int8 btns1=0;
+int8 btns2=0;
+int8 after1=0;
+int8 after2=0;
+
+void main(){
+set_tris_a(0b1111111);
+setup_adc_ports(96); //AN5 y AN6
+setup_adc(adc_clock_internal);
+setup_wdt(WDT_2304MS); //config del watchdog cada 2.304 segundos
+
+while(true){
+   set_adc_channel(5);
+   delay_us(500);
+   M1V=read_adc();
+   
+   set_adc_channel(6);
+   delay_us(500);
+   M2V=read_adc();
+   
+   //motor 1
+   if(bit_test(M1D)&&!bit_test(M1I)&&count1>=M1V){ //derecha
+      btns1=7;
+      after1=3;
+      count1=0;
+   }
+   else if(bit_test(M1I)&&!bit_test(M1D)&&count1>=M1V){ //izquierda
+      btns1=5;
+      after1=1;
+      count1=0;
+   }
+   else{ //off
+      btns1=8;
+      after1=8;
+   }
+   
+   //motor 2   
+   if(bit_test(M2D)&&!bit_test(M2I)&&count2>=M2V){ //derecha
+      btns2=7;
+      after2=3;
+      count2=0;
+   }
+   else if(bit_test(M2I)&&!bit_test(M2D)&&count2>=M2V){ //izquierda
+      btns2=5;
+      after2=1;
+      count2=0;
+   }
+   else{ //off
+      btns2=8;
+      after2=8;
+   }
+   
+   i2c_start(); // envio de datos
+   i2c_write(0x70); 
+   i2c_write((btns1*16)+btns2);
+   delay_ms(1);
+   i2c_write((after1*16)+after2);
+   i2c_stop();
+   restart_wdt();
+   count1++;
+   count2++;
+}
+}

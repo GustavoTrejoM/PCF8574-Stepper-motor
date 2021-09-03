@@ -1,0 +1,300 @@
+CCS PCM C Compiler, Version 5.091, 13314               01-sep.-21 17:15
+
+               Filename:   C:\Users\Trejo\Documents\01 Gustavo\02 YouTube\PCF Stepper motor\PCF Stepper.lst
+
+               ROM used:   198 words (2%)
+                           Largest free fragment is 2048
+               RAM used:   11 (3%) at main() level
+                           12 (3%) worst case
+               Stack used: 0 locations
+               Stack size: 8
+
+0000:  MOVLW  00
+0001:  MOVWF  0A
+0002:  GOTO   02A
+0003:  NOP
+.................... /*****************************************************************************/
+.................... // Código para realizar escritura digital en el PCF8574AP, esto para controlar
+.................... // dos motores a paso bipolares
+.................... // Desarrollado por: Gustavo Trejo -Agosto de 2021
+.................... /*****************************************************************************/
+.................... #INCLUDE<16F887.h>
+.................... //////////// Standard Header file for the PIC16F887 device ////////////////
+.................... ///////////////////////////////////////////////////////////////////////////
+.................... ////        (C) Copyright 1996, 2014 Custom Computer Services          ////
+.................... //// This source code may only be used by licensed users of the CCS C  ////
+.................... //// compiler.  This source code may only be distributed to other      ////
+.................... //// licensed users of the CCS C compiler.  No other use, reproduction ////
+.................... //// or distribution is permitted without written permission.          ////
+.................... //// Derivative programs created using this software in object code    ////
+.................... //// form are not restricted in any way.                               ////
+.................... ///////////////////////////////////////////////////////////////////////////
+.................... #device PIC16F887
+.................... 
+.................... #list
+.................... 
+.................... #DEVICE ADC=10
+.................... #FUSES XT,PUT,NOPROTECT,BROWNOUT,NOLVP,WDT
+.................... #USE delay(internal=8000000)
+*
+0014:  MOVLW  25
+0015:  MOVWF  04
+0016:  BCF    03.7
+0017:  MOVF   00,W
+0018:  BTFSC  03.2
+0019:  GOTO   027
+001A:  MOVLW  02
+001B:  MOVWF  78
+001C:  CLRF   77
+001D:  DECFSZ 77,F
+001E:  GOTO   01D
+001F:  DECFSZ 78,F
+0020:  GOTO   01C
+0021:  MOVLW  97
+0022:  MOVWF  77
+0023:  DECFSZ 77,F
+0024:  GOTO   023
+0025:  DECFSZ 00,F
+0026:  GOTO   01A
+0027:  BCF    0A.3
+0028:  BCF    0A.4
+0029:  GOTO   0B6 (RETURN)
+.................... #USE I2C(MASTER, SDA=PIN_C4, SLOW, SCL=PIN_C3, NOFORCE_SW)
+*
+0004:  BCF    14.7
+0005:  BCF    0C.3
+0006:  MOVF   26,W
+0007:  MOVWF  13
+0008:  MOVLW  02
+0009:  BTFSC  14.7
+000A:  GOTO   012
+000B:  BTFSS  0C.3
+000C:  GOTO   00B
+000D:  MOVLW  00
+000E:  BSF    03.5
+000F:  BTFSC  11.6
+0010:  MOVLW  01
+0011:  BCF    03.5
+0012:  MOVWF  78
+0013:  RETURN
+.................... #use standard_io(c)
+.................... 
+.................... #BYTE PORTB=6
+.................... #BYTE OPTION_REG=0X81
+.................... 
+.................... #DEFINE M1D PORTB,0
+.................... #DEFINE M1I PORTB,1
+.................... #DEFINE M2D PORTB,2
+.................... #DEFINE M2I PORTB,3
+.................... 
+.................... 
+.................... /***************************Variables globales********************************/
+.................... int8 btns1=0;
+.................... int8 btns2=0;
+.................... int8 after1=0;
+.................... int8 after2=0;
+.................... 
+.................... void main(){
+*
+002A:  MOVF   03,W
+002B:  ANDLW  1F
+002C:  MOVWF  03
+002D:  MOVLW  71
+002E:  BSF    03.5
+002F:  MOVWF  0F
+0030:  CLRF   10
+0031:  MOVF   0F,W
+0032:  MOVLW  FF
+0033:  BCF    03.5
+0034:  MOVWF  20
+0035:  BSF    20.3
+0036:  MOVF   20,W
+0037:  BSF    03.5
+0038:  MOVWF  07
+0039:  BCF    03.5
+003A:  BSF    20.4
+003B:  MOVF   20,W
+003C:  BSF    03.5
+003D:  MOVWF  07
+003E:  MOVLW  13
+003F:  MOVWF  13
+0040:  MOVLW  28
+0041:  BCF    03.5
+0042:  MOVWF  14
+0043:  BSF    03.5
+0044:  BSF    14.7
+0045:  BCF    14.6
+0046:  BCF    03.5
+0047:  CLRF   21
+0048:  CLRF   22
+0049:  CLRF   23
+004A:  CLRF   24
+004B:  BSF    03.5
+004C:  BSF    03.6
+004D:  MOVF   09,W
+004E:  ANDLW  C0
+004F:  MOVWF  09
+0050:  BCF    03.6
+0051:  BCF    1F.4
+0052:  BCF    1F.5
+0053:  MOVLW  00
+0054:  BSF    03.6
+0055:  MOVWF  08
+0056:  BCF    03.5
+0057:  CLRF   07
+0058:  CLRF   08
+0059:  CLRF   09
+005A:  BCF    03.7
+.................... set_tris_b(0b1111111);
+005B:  MOVLW  7F
+005C:  BSF    03.5
+005D:  BCF    03.6
+005E:  MOVWF  06
+.................... setup_wdt(WDT_2304MS); //config del watchdog cada 2.304 segundos
+005F:  MOVLW  09
+0060:  BCF    03.5
+0061:  BSF    03.6
+0062:  MOVWF  05
+0063:  MOVLW  0F
+0064:  MOVWF  77
+0065:  BCF    03.6
+0066:  CLRF   01
+0067:  MOVLW  81
+0068:  MOVWF  04
+0069:  BCF    03.7
+006A:  MOVF   00,W
+006B:  ANDLW  F0
+006C:  IORLW  07
+006D:  MOVWF  00
+006E:  CLRWDT
+006F:  MOVF   00,W
+0070:  ANDLW  F7
+0071:  BTFSC  77.3
+0072:  ANDLW  F0
+0073:  IORWF  77,W
+0074:  MOVWF  00
+.................... bit_clear(OPTION_REG,7);
+0075:  BSF    03.5
+0076:  BCF    01.7
+.................... while(true){
+.................... 
+....................    //motor 1
+....................    if(!bit_test(M1D)&&bit_test(M1I)){ //derecha
+0077:  BCF    03.5
+0078:  BTFSC  06.0
+0079:  GOTO   081
+007A:  BTFSS  06.1
+007B:  GOTO   081
+....................       btns1=7;
+007C:  MOVLW  07
+007D:  MOVWF  21
+....................       after1=3;
+007E:  MOVLW  03
+007F:  MOVWF  23
+....................    }
+0080:  GOTO   08D
+....................    else if(!bit_test(M1I)&&bit_test(M1D)){ //izquierda
+0081:  BTFSC  06.1
+0082:  GOTO   08A
+0083:  BTFSS  06.0
+0084:  GOTO   08A
+....................       btns1=5;
+0085:  MOVLW  05
+0086:  MOVWF  21
+....................       after1=1;
+0087:  MOVLW  01
+0088:  MOVWF  23
+....................    }
+0089:  GOTO   08D
+....................    else{ //off
+....................       btns1=8;
+008A:  MOVLW  08
+008B:  MOVWF  21
+....................       after1=8;
+008C:  MOVWF  23
+....................    }
+....................    
+....................    //motor 2   
+....................    if(!bit_test(M2D)&&bit_test(M2I)){ //derecha
+008D:  BTFSC  06.2
+008E:  GOTO   096
+008F:  BTFSS  06.3
+0090:  GOTO   096
+....................       btns2=7;
+0091:  MOVLW  07
+0092:  MOVWF  22
+....................       after2=3;
+0093:  MOVLW  03
+0094:  MOVWF  24
+....................    }
+0095:  GOTO   0A2
+....................    else if(!bit_test(M2I)&&bit_test(M2D)){ //izquierda
+0096:  BTFSC  06.3
+0097:  GOTO   09F
+0098:  BTFSS  06.2
+0099:  GOTO   09F
+....................       btns2=5;
+009A:  MOVLW  05
+009B:  MOVWF  22
+....................       after2=1;
+009C:  MOVLW  01
+009D:  MOVWF  24
+....................    }
+009E:  GOTO   0A2
+....................    else{ //off
+....................       btns2=8;
+009F:  MOVLW  08
+00A0:  MOVWF  22
+....................       after2=8;
+00A1:  MOVWF  24
+....................    }
+....................    
+....................    i2c_start(); // envio de datos
+00A2:  BSF    03.5
+00A3:  BSF    11.0
+00A4:  BTFSC  11.0
+00A5:  GOTO   0A4
+....................    i2c_write(0x70); 
+00A6:  MOVLW  70
+00A7:  BCF    03.5
+00A8:  MOVWF  26
+00A9:  CALL   004
+....................    i2c_write((btns1*16)+btns2);
+00AA:  SWAPF  21,W
+00AB:  MOVWF  77
+00AC:  MOVLW  F0
+00AD:  ANDWF  77,F
+00AE:  MOVF   77,W
+00AF:  ADDWF  22,W
+00B0:  MOVWF  25
+00B1:  MOVWF  26
+00B2:  CALL   004
+....................    delay_ms(1);
+00B3:  MOVLW  01
+00B4:  MOVWF  25
+00B5:  GOTO   014
+....................    i2c_write((after1*16)+after2);
+00B6:  SWAPF  23,W
+00B7:  MOVWF  77
+00B8:  MOVLW  F0
+00B9:  ANDWF  77,F
+00BA:  MOVF   77,W
+00BB:  ADDWF  24,W
+00BC:  MOVWF  25
+00BD:  MOVWF  26
+00BE:  CALL   004
+....................    i2c_stop();
+00BF:  BSF    03.5
+00C0:  BSF    11.2
+00C1:  BTFSC  11.2
+00C2:  GOTO   0C1
+....................    restart_wdt();
+00C3:  CLRWDT
+00C4:  GOTO   077
+.................... }
+.................... }
+00C5:  SLEEP
+
+Configuration Fuses:
+   Word  1: 2FEC   INTRC_IO WDT PUT MCLR NOPROTECT NOCPD BROWNOUT IESO FCMEN NOLVP NODEBUG
+   Word  2: 3FFF   BORV40 NOWRT

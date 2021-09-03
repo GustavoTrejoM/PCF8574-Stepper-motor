@@ -1,0 +1,69 @@
+004-005 @WRITE_PROGRAM_MEMORY8.P1
+004-005 @READ_PROGRAM_MEMORY8.P2
+006     PORTB
+015     CCP_1_LOW
+015     CCP_1
+016     CCP_1_HIGH
+01B     CCP_2_LOW
+01B     CCP_2
+01C     CCP_2_HIGH
+020     @TRIS_C
+021     btns1
+022     btns2
+023     after1
+024     after2
+025     @delay_ms1.P1
+025     main.@SCRATCH1
+026     @I2C_WRITEU_129.P1
+077     @SCRATCH
+078     @SCRATCH
+078     _RETURN_
+079     @SCRATCH
+07A     @SCRATCH
+081     OPTION_REG
+107.6   C1OUT
+108.6   C2OUT
+10D-10E @WRITE_PROGRAM_MEMORY8.P1
+10D-10E @READ_PROGRAM_MEMORY8.P2
+
+ROM Allocation:
+000004  @I2C_WRITEU_129
+000014  @delay_ms1
+00002A  main
+00002A  @cinit1
+00005A  @cinit2
+
+Project Directory:
+    C:\Users\Trejo\Documents\01 Gustavo\02 YouTube\PCF Stepper motor\
+
+Project Files:
+    PCF Stepper.c                                           [01-sep.-21 17:15  CRC=9CE7543A]
+    ..\..\..\..\..\..\Program Files (x86)\PICC\Devices\16F887.h [30-oct.-19 15:48  CRC=C6420252]
+
+Source signature=296B58DE
+Program memory checksum=0000
+Hex file CRC=DC67
+
+Units:
+    C:\Users\Trejo\Documents\01 Gustavo\02 YouTube\PCF Stepper motor\PCF Stepper (main)
+
+Compiler Settings:
+    Processor:      PIC16F887
+    Pointer Size:   16
+    ADC Range:      0-1023
+    Opt Level:      9
+    Short,Int,Long: UNSIGNED: 1,8,16
+    Float,Double:   32,32
+    Compile Mode:       CCS5
+
+Output Files:
+    XREF file:   PCF Stepper.xsym
+    Errors:      PCF Stepper.err
+    Ext Symbols: PCF Stepper.esym
+    INHX8:       PCF Stepper.hex
+    Symbols:     PCF Stepper.sym
+    List:        PCF Stepper.lst
+    Debug/COFF:  PCF Stepper.cof
+    Project:     PCF Stepper.ccspjt
+    Call Tree:   PCF Stepper.tre
+    Statistics:  PCF Stepper.STA
